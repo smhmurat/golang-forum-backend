@@ -1,4 +1,4 @@
-package database
+package utils
 
 import (
 	"database/sql"
@@ -11,7 +11,12 @@ var db *sql.DB
 
 func InitDB() {
 	var err error
-	db, err = sql.Open("sqlite3", "../forum.db")
+	db, err = sql.Open("sqlite3", "./forum.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Ping()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,7 +33,8 @@ func createTables() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
+        password TEXT,
+        token TEXT
     );`
 
 	postTable := `CREATE TABLE IF NOT EXISTS posts (
