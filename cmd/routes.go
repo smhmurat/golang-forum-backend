@@ -1,23 +1,25 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"golang-forum-backend/controllers"
 	"net/http"
 )
 
 func (a *application) routes() http.Handler {
-	mux := chi.NewRouter()
-	mux.Use(middleware.RequestID)
-	mux.Use(middleware.RealIP)
-	mux.Use(middleware.Recoverer)
-
-	if a.debug {
-		mux.Use(middleware.Logger)
-	}
-	mux.Post("/auth/signup", controllers.SignUp)
-	mux.Post("/auth/login", controllers.SignIn)
+	mux := http.NewServeMux()
+	//mux.Use(middleware.RequestID)
+	//mux.Use(middleware.RealIP)
+	//mux.Use(middleware.Recoverer)
+	//
+	//if a.debug {
+	//	mux.Use(middleware.Logger)
+	//}
+	mux.HandleFunc("/auth/signup", controllers.SignUp)
+	mux.HandleFunc("/auth/google/signup", controllers.SignUpWithGoogle)
+	mux.HandleFunc("/auth/google/callback", controllers.SignUpWithGoogleCallback)
+	mux.HandleFunc("/auth/login", controllers.SignIn)
+	mux.HandleFunc("/auth/github/login", controllers.HandleGitHubLogin)
+	mux.HandleFunc("/auth/github/callback", controllers.HandleGitHubCallback)
 
 	return mux
 }
